@@ -1,0 +1,47 @@
+.cards-resumo {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.card-resumo {
+    flex: 1;
+    min-width: 180px;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+    background: #fff;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+}
+
+.card-resumo h4 {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.area-grafico {
+    margin-top: 2rem;
+    min-height: 200px;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    background-color: #fafafa;
+}
+
+.area-grafico-dupla {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.grafico-item {
+    flex: 1 1 45%;
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}

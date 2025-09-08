@@ -1,0 +1,76 @@
+.admin-container {
+    background-color: #f6f6f6;
+    min-height: 100vh;
+    position: relative;
+    padding-top: 60px;
+    font-family: Arial, sans-serif;
+}
+
+.admin-logo {
+    max-width: 160px;
+    margin-bottom: 20px;
+}
+
+.admin-header {
+    text-align: center;
+}
+
+.admin-header h2 {
+    color: #00579d;
+    margin: 10px 0;
+}
+
+.admin-header h3 {
+    color: #0070c0;
+    margin: 5px 0 30px;
+}
+
+.admin-card {
+    max-width: 400px;
+    margin: 0 auto;
+    border: 2px solid orange;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.admin-card h3 {
+    color: #00579d;
+    margin-bottom: 10px;
+}
+
+.admin-card p {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.admin-btn-acessar {
+    background-color: #f7931e;
+    color: white;
+    border: none;
+    padding: 12px 0;
+    width: 100%;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.admin-btn-acessar:hover {
+    background-color: #e57f06;
+}
+
+.admin-btn-sair {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: transparent;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
