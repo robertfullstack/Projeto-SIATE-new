@@ -9,6 +9,10 @@ import { ref, push, onValue, remove, update, get } from 'firebase/database';
 function AgendaEventos({ tipo }) {
     const navigate = useNavigate();
 
+    const cpfLogado = localStorage.getItem("cpfLogado");
+    const isCpfEspecial = cpfLogado === "000.000.000-01";
+
+
     const [eventos, setEventos] = useState([]);
     const [novoEvento, setNovoEvento] = useState({
         diretoria: tipo || '',
@@ -39,8 +43,9 @@ function AgendaEventos({ tipo }) {
     }, []);
 
     const eventosFiltrados = tipo
-        ? eventos.filter((evento) => evento.diretoria === tipo)
+        ? eventos.filter((evento) => evento.diretoria?.toLowerCase() === tipo?.toLowerCase())
         : eventos;
+
 
     const [nomeUsuario, setNomeUsuario] = useState('');
     const [cpfUsuario, setCpfUsuario] = useState('');
@@ -161,6 +166,7 @@ function AgendaEventos({ tipo }) {
         setEditandoId(evento.id);
         setMostrarFormulario(true);
     };
+    const isAdminMaster = cpfLogado === "000.000.000-00";
 
     const [mostrarFormularioUsuario, setMostrarFormularioUsuario] = useState(false);
     const [novoUsuario, setNovoUsuario] = useState({ nome: '', email: '', tipo: '' });
@@ -186,15 +192,16 @@ function AgendaEventos({ tipo }) {
     const [telaAtiva, setTelaAtiva] = useState('eventos'); // eventos | usuarios
     const eventosFiltradosComFiltro = eventosFiltrados
         .filter(ev => {
-            const matchDiretoria = tipo ? ev.diretoria === tipo : (filtroDiretoria === '' || ev.diretoria === filtroDiretoria);
+            const matchDiretoria = tipo
+                ? ev.diretoria?.toLowerCase() === tipo?.toLowerCase()
+                : (filtroDiretoria === '' || ev.diretoria?.toLowerCase() === filtroDiretoria.toLowerCase());
+
             const matchDataInicio = filtroDataInicio === '' || new Date(ev.data) >= new Date(filtroDataInicio);
             const matchDataFim = filtroDataFim === '' || new Date(ev.data) <= new Date(filtroDataFim);
             const matchSituacao = filtroSituacao === '' || ev.situacao === filtroSituacao;
             return matchDiretoria && matchDataInicio && matchDataFim && matchSituacao;
         })
-        .sort((a, b) => new Date(b.data + 'T' + b.hora) - new Date(a.data + 'T' + a.hora)); // mais recentes primeiro
-
-
+        .sort((a, b) => new Date(b.data + 'T' + b.hora) - new Date(a.data + 'T' + a.hora));
 
 
 
@@ -210,22 +217,29 @@ function AgendaEventos({ tipo }) {
             </header>
             <nav className="menu" style={{ width: '300px' }}>
                 <button onClick={() => setTelaAtiva('eventos')}>📅 Eventos e Consultas</button>
-                <button onClick={() => setTelaAtiva('usuarios')}>👤 Usuários</button>
+                {!isCpfEspecial && (
+                    <button onClick={() => setTelaAtiva('usuarios')}>👤 Usuários</button>
+                )}
             </nav>
+
+
 
 
             <div className="conteudo">
                 {telaAtiva === 'eventos' && (
                     <div className="tabela-eventos">
-                        <div className="botoes-agenda">
-                            <button className="btn-criar" onClick={() => {
-                                setNovoEvento({ diretoria: tipo || '', tipo: '', data: '', hora: '', horaFim: '', local: '', necessidades: '', obs: '', situacao: 'A realizar', assunto: '' });
-                                setEditandoId(null);
-                                setMostrarFormulario(true);
-                            }}>
-                                ➕ Criar Evento
-                            </button>
-                        </div>
+                        {!isCpfEspecial && (
+                            <div className="botoes-agenda">
+                                <button className="btn-criar" onClick={() => {
+                                    setNovoEvento({ diretoria: tipo || '', tipo: '', data: '', hora: '', horaFim: '', local: '', necessidades: '', obs: '', situacao: 'A realizar', assunto: '' });
+                                    setEditandoId(null);
+                                    setMostrarFormulario(true);
+                                }}>
+                                    ➕ Criar Evento
+                                </button>
+                            </div>
+                        )}
+
                         {mostrarFormulario && (
                             <div className="form-evento">
                                 <h4>{editandoId ? 'Editar Evento' : 'Novo Evento'}</h4>
@@ -380,9 +394,14 @@ function AgendaEventos({ tipo }) {
                                                     <td>{evento.situacao}</td>
                                                     <td>{evento.obs}</td>
                                                     <td>
-                                                        <button onClick={() => handleEditarEvento(evento)} style={{ marginRight: 6, backgroundColor: '#007bff', color: '#fff', border: 'none', padding: '5px 8px', borderRadius: '4px', cursor: 'pointer' }}>✏️</button>
-                                                        <button onClick={() => handleExcluirEvento(evento.id)} style={{ backgroundColor: '#dc3545', color: '#fff', border: 'none', padding: '5px 8px', borderRadius: '4px', cursor: 'pointer' }}>🗑️</button>
+                                                        {!isCpfEspecial && (
+                                                            <>
+                                                                <button onClick={() => handleEditarEvento(evento)} style={{ marginRight: 6, backgroundColor: '#007bff', color: '#fff', border: 'none', padding: '5px 8px', borderRadius: '4px', cursor: 'pointer' }}>✏️</button>
+                                                                <button onClick={() => handleExcluirEvento(evento.id)} style={{ backgroundColor: '#dc3545', color: '#fff', border: 'none', padding: '5px 8px', borderRadius: '4px', cursor: 'pointer' }}>🗑️</button>
+                                                            </>
+                                                        )}
                                                     </td>
+
                                                 </tr>
                                             ))
                                     )}
@@ -394,7 +413,7 @@ function AgendaEventos({ tipo }) {
                     </div>
                 )}
 
-                {telaAtiva === 'usuarios' && (
+                {telaAtiva === 'usuarios' && isAdminMaster && (
                     <div className="form-usuarios">
                         <button className="btn-criar" onClick={() => setMostrarFormularioUsuario(true)}>
                             👤 Criar Usuário
@@ -409,11 +428,12 @@ function AgendaEventos({ tipo }) {
                                     {/* <option value="Diretoria de Administração">Diretoria de Administração</option> */}
                                     {/* <option value="DE-presidencia">DE - Presidência aa</option> */}
                                     {/* <option value="presidencia">DE - Presidência</option> */}
-                                    <option value="presidencia2">DE - Presidência OK</option>
-                                    <option value="presidencia12342">DE - Presidência OK</option>
+                                    <option value="presidencia12342" style={{ display: 'none' }} >Selecione</option>
+                                    <option value="Presidência" selected>DE - Presidência</option>
+                                    <option value="Saude" selected>Suade</option>
                                     <option value="Diretoria de Administração">Diretoria de Administração</option>
                                     <option value="Diretoria de Finanças">Diretoria de Finanças</option>
-                                    {/* <option value="Diretoria de Esportes">Diretoria de Esportes</option> */}
+                                    <option value="Diretoria de Esportes">Diretoria de Esportes</option>
                                     <option value="Diretoria de Saúde e Benefícios">Diretoria de Saúde e Benefícios</option>
                                     <option value="Diretoria de Eventos Sociais">Diretoria de Eventos Sociais</option>
                                     <option value="Diretoria de Cultura">Diretoria de Cultura</option>

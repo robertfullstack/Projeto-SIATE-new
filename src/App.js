@@ -32,8 +32,9 @@ function App() {
         <Route path="/agenda-eventos" element={<AgendaEventos />} />
 
         {/* Rotas de agenda específicas */}
-        {/* <Route path="/agenda-eventos-presidencia" element={<AgendaEventos tipo="fkjdsjklsd" />} /> */}
-        <Route path="/agenda-eventos-presidencia" element={<AgendaEventos tipo="presidencia2" />} />
+
+        <Route path="/agenda-eventos-presidencia" element={<AgendaEventos tipo="Presidência" />} />
+        <Route path="/agenda-eventos-saude-beneficios" element={<AgendaEventos tipo="Saude" />} />
         <Route path="/agenda-eventos-administrativa" element={<AgendaEventos tipo="Diretoria de Administração" />} />
         <Route path="/agenda-eventos-financas" element={<AgendaEventos tipo="Diretoria de Finanças" />} />
         <Route path="/agenda-eventos-esportes" element={<AgendaEventos tipo="Diretoria de Esportes" />} />
@@ -43,7 +44,7 @@ function App() {
         <Route path="/agenda-eventos-conselho-deliberativo" element={<AgendaEventos tipo="Conselho Deliberativo" />} />
         <Route path="/agenda-eventos-conselho-fiscal" element={<AgendaEventos tipo="Conselho Fiscal" />} />
         <Route path="/agenda-eventos-diretoria-executiva" element={<AgendaEventos tipo="Diretoria Executiva" />} />
-        <Route path="/agenda-eventos-presidencia" element={<AgendaEventos tipo="presidencia2" />} />
+
 
       </Routes>
     </Router>

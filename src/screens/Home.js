@@ -13,6 +13,13 @@ function Home() {
     const handleLogin = async () => {
         const cpfFormatado = cpf.trim();
 
+        // ✅ CPF especial para acesso apenas à Agenda de Eventos (sem cadastro)
+        if (cpfFormatado === "000.000.000-01") {
+            localStorage.setItem("cpfLogado", cpfFormatado);
+            navigate("/agenda-eventos");
+            return;
+        }
+
         try {
             const usuariosRef = ref(db, 'usuarios');
             const snapshot = await get(usuariosRef);
@@ -24,52 +31,35 @@ function Home() {
 
                 if (usuario) {
                     localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
+                    localStorage.setItem("cpfLogado", cpfFormatado);
 
-                    const funcao = usuario.funcao?.toLowerCase().trim();
+                    const funcao = usuario.funcao?.trim(); // mantém exatamente como foi cadastrado no Firebase
 
-                    // Rotas específicas para agendas/painéis
-                    // if (funcao === 'fkjdsjklsd') {
-                    //     navigate('/agenda-eventos-presidencia');
-                    // } 
-                    if (funcao === 'presidencia2') {
-                        navigate('/agenda-eventos-presidencia');
-                    }
-                    else if (funcao === 'diretoria de administração') {
-                        navigate('/agenda-eventos-administrativa');
-                    } else if (funcao === 'diretoria de finanças') {
-                        navigate('/agenda-eventos-financas');
-                    } else if (funcao === 'diretoria de esportes') {
-                        navigate('/agenda-eventos-esportes');
-                    } else if (funcao === 'diretoria de saúde e benefícios') {
-                        navigate('/agenda-eventos-saude-beneficios');
-                    } else if (funcao === 'diretoria de eventos sociais') {
-                        navigate('/agenda-eventos-sociais');
-                    } else if (funcao === 'diretoria de cultura') {
-                        navigate('/agenda-eventos-cultura');
-                    } else if (funcao === 'conselho deliberativo') {
-                        navigate('/agenda-eventos-conselho-deliberativo');
-                    } else if (funcao === 'conselho fiscal') {
-                        navigate('/agenda-eventos-conselho-fiscal');
-                    }
-                    else if (funcao === 'presidencia2') {
-                        navigate('/agenda-eventos-presidencia');
-                    }
+                    // Mapeamento: função → rota
+                    const rotas = {
+                        "Presidência": "/agenda-eventos-presidencia",
+                        "Diretoria de Administração": "/agenda-eventos-administrativa",
+                        "Diretoria de Finanças": "/agenda-eventos-financas",
+                        "Diretoria de Esportes": "/agenda-eventos-esportes",
+                        "Diretoria de Saúde e Benefícios": "/agenda-eventos-saude-beneficios",
+                        "Diretoria de Eventos Sociais": "/agenda-eventos-sociais",
+                        "Diretoria de Cultura": "/agenda-eventos-cultura",
+                        "Conselho Deliberativo": "/agenda-eventos-conselho-deliberativo",
+                        "Conselho Fiscal": "/agenda-eventos-conselho-fiscal",
+                        "Diretoria Executiva": "/agenda-eventos-diretoria-executiva",
+                        "Contábil": "/painelcontabil",
+                        "Jurídico": "/paineljuridico",
+                        "Diretorias": "/paineldiretorias",
+                        "Clínica Social": "/painelclinicasocial",
+                        "Admin": "/admin"
+                    };
 
-                    else if (funcao === 'diretoria executiva') {
-                        navigate('/agenda-eventos-executiva');
-                    } else if (funcao === 'contábil') {
-                        navigate('/painelcontabil');
-                    } else if (funcao === 'jurídico') {
-                        navigate('/paineljuridico');
-                    } else if (funcao === 'diretorias') {
-                        navigate('/painelDiretorias');
-                    } else if (funcao === 'clínica social') {
-                        navigate('/painelclinicasocial');
-                    } else if (funcao === 'admin' || cpfFormatado === '000.000.000-00') {
-                        navigate('/admin');
-                    } else {
-                        navigate('/atendimentos'); // fallback padrão
-                    }
+                    // pega a rota correspondente
+                    const rotaDestino = rotas[funcao] || (cpfFormatado === "000.000.000-00" ? "/admin" : "/atendimentos");
+
+                    // redireciona
+                    navigate(rotaDestino);
+
                 } else {
                     setErro('CPF não encontrado.');
                 }
