@@ -1,14 +1,18 @@
 import './AgendaEventos.css';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Logo01 from '../images/logo01.png';
+import { PieChart, Pie, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+
+
+
 
 import { db } from '../firebaseConfig';
 import { ref, push, onValue, remove, update, get } from 'firebase/database';
 
 function AgendaEventos({ tipo }) {
+    const COLORS = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1', '#17a2b8', '#fd7e14'];
     const navigate = useNavigate();
-
     const cpfLogado = localStorage.getItem("cpfLogado");
     const isCpfEspecial = cpfLogado === "000.000.000-01";
 
@@ -41,6 +45,7 @@ function AgendaEventos({ tipo }) {
             }
         });
     }, []);
+
 
     const eventosFiltrados = tipo
         ? eventos.filter((evento) => evento.diretoria?.toLowerCase() === tipo?.toLowerCase())
@@ -217,6 +222,46 @@ function AgendaEventos({ tipo }) {
         })
         .sort((a, b) => new Date(b.data + 'T' + b.hora) - new Date(a.data + 'T' + a.hora));
 
+    const eventosParaGrafico = eventosFiltrados.filter(ev => {
+        const dataEvento = new Date(ev.data);
+        const inicio = filtroDataInicio ? new Date(filtroDataInicio) : null;
+        const fim = filtroDataFim ? new Date(filtroDataFim) : null;
+
+        const depoisInicio = !inicio || dataEvento >= inicio;
+        const antesFim = !fim || dataEvento <= fim;
+
+        return depoisInicio && antesFim;
+    });
+
+
+
+    const graficoPorAssunto = useMemo(() => {
+        const agrupado = {};
+
+        eventosParaGrafico.forEach(ev => {
+            const assunto = ev.assunto || 'Não informado';
+            agrupado[assunto] = (agrupado[assunto] || 0) + 1;
+        });
+
+        return Object.entries(agrupado).map(([nome, qtd]) => ({
+            nome,
+            qtd
+        }));
+    }, [eventosParaGrafico]);
+
+    const graficoPorDiretoria = useMemo(() => {
+        const agrupado = {};
+
+        eventosParaGrafico.forEach(ev => {
+            const diretoria = ev.diretoria || 'Não informada';
+            agrupado[diretoria] = (agrupado[diretoria] || 0) + 1;
+        });
+
+        return Object.entries(agrupado).map(([nome, qtd]) => ({
+            nome,
+            qtd
+        }));
+    }, [eventosParaGrafico]);
 
     return (
         <div className="agenda-container">
@@ -485,36 +530,61 @@ function AgendaEventos({ tipo }) {
                             )}
                         </div>
                     </div>
-
-
                 )}
             </div>
+            <h3 className="titulo-secao">📊 Resumo da Agenda</h3>
 
+            <div className="area-grafico-dupla">
 
-            {/* {abaAtiva === 'usuarios' && (
-                <>
-                    <button className="btn-criar" onClick={() => setMostrarFormularioUsuario(true)}>
-                        👤 Criar Usuário
-                    </button>
+                {/* Pizza por Diretoria */}
+                <div className="grafico-item">
+                    <h4>Eventos por Diretoria</h4>
+                    <ResponsiveContainer width="100%" height={250}>
+                        <PieChart>
+                            <Pie
+                                data={graficoPorDiretoria}
+                                dataKey="qtd"
+                                nameKey="nome"
+                                outerRadius={80}
+                                label={({ name, percent }) =>
+                                    `${name}: ${(percent * 100).toFixed(0)}%`
+                                }
+                            >
+                                {graficoPorDiretoria.map((_, index) => (
+                                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                                ))}
+                            </Pie>
+                            <Tooltip />
+                            <Legend />
+                        </PieChart>
+                    </ResponsiveContainer>
+                </div>
 
-                    {mostrarFormularioUsuario && (
-                        <div className="form-usuario">
-                            <h3>Cadastrar Novo Usuário</h3>
-                            <input type="text" placeholder="Nome" value={nomeUsuario} onChange={(e) => setNomeUsuario(e.target.value)} />
-                            <input type="text" placeholder="CPF" value={cpfUsuario} onChange={handleCpfChange} maxLength={14} />
-                            <select value={funcaoUsuario} onChange={(e) => setFuncaoUsuario(e.target.value)}>
-                                <option value="Diretoria de Administração">Diretoria de Administração</option>
-                                <option value="Diretoria2">Diretoria de Administração</option>
-                                <option value="Conselho Fiscal">Conselho Fiscal</option>
-                                <option value="Diretoria de Finanças">Diretoria de Finanças</option>
-                                <option value="DE - Presidência">DE - Presidência</option>
-                            </select>
-                            <button className="btn-salvar" onClick={handleCadastrarUsuario}>Cadastrar Usuário</button>
-                        </div>
-                    )}
-                </>
-            )} */}
+                {/* Pizza por Assunto */}
+                <div className="grafico-item">
+                    <h4>Eventos por Assunto</h4>
+                    <ResponsiveContainer width="100%" height={250}>
+                        <PieChart>
+                            <Pie
+                                data={graficoPorAssunto}
+                                dataKey="qtd"
+                                nameKey="nome"
+                                outerRadius={80}
+                                label={({ name, percent }) =>
+                                    `${name}: ${(percent * 100).toFixed(0)}%`
+                                }
+                            >
+                                {graficoPorAssunto.map((_, index) => (
+                                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                                ))}
+                            </Pie>
+                            <Tooltip />
+                            <Legend />
+                        </PieChart>
+                    </ResponsiveContainer>
+                </div>
 
+            </div>
 
         </div>
     );
