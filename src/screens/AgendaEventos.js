@@ -206,8 +206,12 @@ function AgendaEventos({ tipo }) {
     const eventosFiltradosComFiltro = eventosFiltrados
         .filter(ev => {
             const matchDiretoria = tipo
-                ? ev.diretoria?.toLowerCase() === tipo?.toLowerCase()
-                : (filtroDiretoria === '' || ev.diretoria?.toLowerCase() === (filtroMap[filtroDiretoria] || '').toLowerCase());
+                ? ev.diretoria?.toLowerCase() === tipo.toLowerCase()
+                : (
+                    filtroDiretoria === '' ||
+                    ev.diretoria?.toLowerCase() === (filtroMap[filtroDiretoria] || '').toLowerCase()
+                );
+
 
             const matchDataInicio = filtroDataInicio === '' || new Date(ev.data) >= new Date(filtroDataInicio);
             const matchDataFim = filtroDataFim === '' || new Date(ev.data) <= new Date(filtroDataFim);
