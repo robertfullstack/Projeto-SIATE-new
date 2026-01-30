@@ -91,13 +91,7 @@ function AgendaEventos({ tipo }) {
     };
 
     const handleCriarEvento = async () => {
-        const { diretoria, tipo, data, hora, local } = novoEvento;
-
-        // if (!diretoria || !tipo || !data || !hora || !local) {
-        //     alert("Preencha todos os campos obrigatórios.");
-        //     return;
-        // }
-
+        // const { diretoria, tipo, data, hora, local } = novoEvento; // Remover, não usado
         try {
             if (editandoId) {
                 await update(ref(db, `eventos/${editandoId}`), novoEvento);
@@ -106,8 +100,18 @@ function AgendaEventos({ tipo }) {
                 await push(ref(db, 'eventos'), novoEvento);
                 alert("Evento salvo com sucesso!");
             }
-
-            setNovoEvento({ diretoria: tipo || '', tipo: '', data: '', hora: '', local: '', necessidades: '', obs: '', situacao: 'A realizar', assunto: '', horaFim: '' });
+            setNovoEvento({
+                diretoria: tipo || '',
+                tipo: '',
+                data: '',
+                hora: '',
+                horaFim: '',
+                local: '',
+                necessidades: '',
+                obs: '',
+                situacao: 'A realizar',
+                assunto: ''
+            });
             setMostrarFormulario(false);
             setEditandoId(null);
         } catch (error) {
@@ -115,6 +119,7 @@ function AgendaEventos({ tipo }) {
             alert("Erro ao salvar evento.");
         }
     };
+
     // Adicione estado para usuários
     const [usuarios, setUsuarios] = useState([]);
 
@@ -145,7 +150,6 @@ function AgendaEventos({ tipo }) {
         }
     };
     const [filtroDiretoria, setFiltroDiretoria] = useState('');
-    const [filtroData, setFiltroData] = useState('');
     const [filtroSituacao, setFiltroSituacao] = useState('');
     const [filtroDataInicio, setFiltroDataInicio] = useState('');
     const [filtroDataFim, setFiltroDataFim] = useState('');
@@ -170,25 +174,6 @@ function AgendaEventos({ tipo }) {
 
     const [mostrarFormularioUsuario, setMostrarFormularioUsuario] = useState(false);
     const [novoUsuario, setNovoUsuario] = useState({ nome: '', email: '', tipo: '' });
-
-    const handleCriarUsuario = async () => {
-        const { nome, email, tipo } = novoUsuario;
-
-        if (!nome || !email || !tipo) {
-            alert("Preencha todos os campos do usuário.");
-            return;
-        }
-
-        try {
-            await push(ref(db, 'usuarios'), novoUsuario);
-            alert("Usuário criado com sucesso!");
-            setNovoUsuario({ nome: '', email: '', tipo: '' });
-        } catch (error) {
-            console.error("Erro ao criar usuário:", error);
-            alert("Erro ao criar usuário.");
-        }
-    };
-    const [abaAtiva, setAbaAtiva] = useState('eventos');
     const [telaAtiva, setTelaAtiva] = useState('eventos'); // eventos | usuarios
     // Mapeamento entre valor do filtro e valor real no evento
     const filtroMap = {
