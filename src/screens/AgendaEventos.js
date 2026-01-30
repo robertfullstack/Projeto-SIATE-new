@@ -23,7 +23,7 @@ function AgendaEventos({ tipo }) {
         local: '',
         necessidades: '',
         obs: '',
-        situacao: "A Realizar",   // 👈 já inicia com "A Realizar"
+        situacao: "A Realizar",   // 👈 já inicia com "A Realizar"a
         assunto: ''
     });
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -173,7 +173,7 @@ function AgendaEventos({ tipo }) {
     const isAdminMaster = cpfLogado === "000.000.000-00";
 
     const [mostrarFormularioUsuario, setMostrarFormularioUsuario] = useState(false);
-    const [novoUsuario, setNovoUsuario] = useState({ nome: '', email: '', tipo: '' });
+    // const [novoUsuario, setNovoUsuario] = useState({ nome: '', email: '', tipo: '' });
     const [telaAtiva, setTelaAtiva] = useState('eventos'); // eventos | usuarios
     // Mapeamento entre valor do filtro e valor real no evento
     const filtroMap = {
