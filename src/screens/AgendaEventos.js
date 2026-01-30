@@ -190,32 +190,19 @@ function AgendaEventos({ tipo }) {
     };
     const [abaAtiva, setAbaAtiva] = useState('eventos');
     const [telaAtiva, setTelaAtiva] = useState('eventos'); // eventos | usuarios
-    // Mapeamento entre valor do filtro e valor real no evento
-    const filtroMap = {
-        'DE - Presidência': 'Presidência',
-        'Diretoria de Administração': 'Diretoria de Administração',
-        'Diretoria de Finanças': 'Diretoria de Finanças',
-        'Diretoria de Saúde e Benefícios': 'Diretoria de Saúde e Benefícios',
-        'Diretoria de Eventos Sociais': 'Diretoria de Eventos Sociais',
-        'Diretoria de Cultura': 'Diretoria de Cultura',
-        'Conselho Deliberativo': 'Conselho Deliberativo',
-        'Conselho Fiscal': 'Conselho Fiscal',
-        'Diretoria Executiva': 'Diretoria Executiva'
-    };
-
     const eventosFiltradosComFiltro = eventosFiltrados
         .filter(ev => {
             const matchDiretoria = tipo
                 ? ev.diretoria?.toLowerCase() === tipo?.toLowerCase()
-                : (filtroDiretoria === '' || ev.diretoria?.toLowerCase() === (filtroMap[filtroDiretoria] || '').toLowerCase());
+                : (filtroDiretoria === '' || ev.diretoria?.toLowerCase() === filtroDiretoria.toLowerCase());
 
             const matchDataInicio = filtroDataInicio === '' || new Date(ev.data) >= new Date(filtroDataInicio);
             const matchDataFim = filtroDataFim === '' || new Date(ev.data) <= new Date(filtroDataFim);
             const matchSituacao = filtroSituacao === '' || ev.situacao === filtroSituacao;
-
             return matchDiretoria && matchDataInicio && matchDataFim && matchSituacao;
         })
         .sort((a, b) => new Date(b.data + 'T' + b.hora) - new Date(a.data + 'T' + a.hora));
+
 
 
     return (
@@ -490,7 +477,36 @@ function AgendaEventos({ tipo }) {
                 )}
             </div>
 
-        </div>
+
+            {/* {abaAtiva === 'usuarios' && (
+                <>
+                    <button className="btn-criar" onClick={() => setMostrarFormularioUsuario(true)}>
+                        👤 Criar Usuário
+                    </button>
+
+                    {mostrarFormularioUsuario && (
+                        <div className="form-usuario">
+                            <h3>Cadastrar Novo Usuário</h3>
+                            <input type="text" placeholder="Nome" value={nomeUsuario} onChange={(e) => setNomeUsuario(e.target.value)} />
+                            <input type="text" placeholder="CPF" value={cpfUsuario} onChange={handleCpfChange} maxLength={14} />
+                            <select value={funcaoUsuario} onChange={(e) => setFuncaoUsuario(e.target.value)}>
+                                <option value="Diretoria de Administração">Diretoria de Administração</option>
+                                <option value="Diretoria2">Diretoria de Administração</option>
+                                <option value="Conselho Fiscal">Conselho Fiscal</option>
+                                <option value="Diretoria de Finanças">Diretoria de Finanças</option>
+                                <option value="DE - Presidência">DE - Presidência</option>
+                            </select>
+                            <button className="btn-salvar" onClick={handleCadastrarUsuario}>Cadastrar Usuário</button>
+                        </div>
+                    )}
+                </>
+            )} */}
+
+
+
+
+
+        </div >
     );
 }
 
