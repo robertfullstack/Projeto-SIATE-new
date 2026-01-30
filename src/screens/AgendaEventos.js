@@ -490,32 +490,6 @@ function AgendaEventos({ tipo }) {
                 )}
             </div>
 
-
-            {/* {abaAtiva === 'usuarios' && (
-                <>
-                    <button className="btn-criar" onClick={() => setMostrarFormularioUsuario(true)}>
-                        👤 Criar Usuário
-                    </button>
-
-                    {mostrarFormularioUsuario && (
-                        <div className="form-usuario">
-                            <h3>Cadastrar Novo Usuário</h3>
-                            <input type="text" placeholder="Nome" value={nomeUsuario} onChange={(e) => setNomeUsuario(e.target.value)} />
-                            <input type="text" placeholder="CPF" value={cpfUsuario} onChange={handleCpfChange} maxLength={14} />
-                            <select value={funcaoUsuario} onChange={(e) => setFuncaoUsuario(e.target.value)}>
-                                <option value="Diretoria de Administração">Diretoria de Administração</option>
-                                <option value="Diretoria2">Diretoria de Administração</option>
-                                <option value="Conselho Fiscal">Conselho Fiscal</option>
-                                <option value="Diretoria de Finanças">Diretoria de Finanças</option>
-                                <option value="DE - Presidência">DE - Presidência</option>
-                            </select>
-                            <button className="btn-salvar" onClick={handleCadastrarUsuario}>Cadastrar Usuário</button>
-                        </div>
-                    )}
-                </>
-            )} */}
-
-
         </div>
     );
 }
