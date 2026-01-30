@@ -23,7 +23,7 @@ function AgendaEventos({ tipo }) {
         local: '',
         necessidades: '',
         obs: '',
-        situacao: "A Realizar",   // 👈 já inicia com "A Realizar"a
+        situacao: "A Realizar",   // 👈 já inicia com "A Realizar"
         assunto: ''
     });
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -91,7 +91,13 @@ function AgendaEventos({ tipo }) {
     };
 
     const handleCriarEvento = async () => {
-        // const { diretoria, tipo, data, hora, local } = novoEvento; // Remover, não usado
+        const { diretoria, tipo, data, hora, local } = novoEvento;
+
+        // if (!diretoria || !tipo || !data || !hora || !local) {
+        //     alert("Preencha todos os campos obrigatórios.");
+        //     return;
+        // }
+
         try {
             if (editandoId) {
                 await update(ref(db, `eventos/${editandoId}`), novoEvento);
@@ -100,18 +106,8 @@ function AgendaEventos({ tipo }) {
                 await push(ref(db, 'eventos'), novoEvento);
                 alert("Evento salvo com sucesso!");
             }
-            setNovoEvento({
-                diretoria: tipo || '',
-                tipo: '',
-                data: '',
-                hora: '',
-                horaFim: '',
-                local: '',
-                necessidades: '',
-                obs: '',
-                situacao: 'A realizar',
-                assunto: ''
-            });
+
+            setNovoEvento({ diretoria: tipo || '', tipo: '', data: '', hora: '', local: '', necessidades: '', obs: '', situacao: 'A realizar', assunto: '', horaFim: '' });
             setMostrarFormulario(false);
             setEditandoId(null);
         } catch (error) {
@@ -119,7 +115,6 @@ function AgendaEventos({ tipo }) {
             alert("Erro ao salvar evento.");
         }
     };
-
     // Adicione estado para usuários
     const [usuarios, setUsuarios] = useState([]);
 
@@ -150,6 +145,7 @@ function AgendaEventos({ tipo }) {
         }
     };
     const [filtroDiretoria, setFiltroDiretoria] = useState('');
+    const [filtroData, setFiltroData] = useState('');
     const [filtroSituacao, setFiltroSituacao] = useState('');
     const [filtroDataInicio, setFiltroDataInicio] = useState('');
     const [filtroDataFim, setFiltroDataFim] = useState('');
@@ -173,7 +169,26 @@ function AgendaEventos({ tipo }) {
     const isAdminMaster = cpfLogado === "000.000.000-00";
 
     const [mostrarFormularioUsuario, setMostrarFormularioUsuario] = useState(false);
-    // const [novoUsuario, setNovoUsuario] = useState({ nome: '', email: '', tipo: '' });
+    const [novoUsuario, setNovoUsuario] = useState({ nome: '', email: '', tipo: '' });
+
+    const handleCriarUsuario = async () => {
+        const { nome, email, tipo } = novoUsuario;
+
+        if (!nome || !email || !tipo) {
+            alert("Preencha todos os campos do usuário.");
+            return;
+        }
+
+        try {
+            await push(ref(db, 'usuarios'), novoUsuario);
+            alert("Usuário criado com sucesso!");
+            setNovoUsuario({ nome: '', email: '', tipo: '' });
+        } catch (error) {
+            console.error("Erro ao criar usuário:", error);
+            alert("Erro ao criar usuário.");
+        }
+    };
+    const [abaAtiva, setAbaAtiva] = useState('eventos');
     const [telaAtiva, setTelaAtiva] = useState('eventos'); // eventos | usuarios
     // Mapeamento entre valor do filtro e valor real no evento
     const filtroMap = {
@@ -191,20 +206,12 @@ function AgendaEventos({ tipo }) {
     const eventosFiltradosComFiltro = eventosFiltrados
         .filter(ev => {
             const matchDiretoria = tipo
-                ? ev.diretoria?.toLowerCase() === tipo.toLowerCase()
-                : (
-                    filtroDiretoria === '' ||
-                    ev.diretoria?.toLowerCase() === (filtroMap[filtroDiretoria] || '').toLowerCase()
-                );
+                ? ev.diretoria?.toLowerCase() === tipo?.toLowerCase()
+                : (filtroDiretoria === '' || ev.diretoria?.toLowerCase() === (filtroMap[filtroDiretoria] || '').toLowerCase());
 
-            const matchDataInicio =
-                filtroDataInicio === '' || new Date(ev.data) >= new Date(filtroDataInicio);
-
-            const matchDataFim =
-                filtroDataFim === '' || new Date(ev.data) <= new Date(filtroDataFim);
-
-            const matchSituacao =
-                filtroSituacao === '' || ev.situacao === filtroSituacao;
+            const matchDataInicio = filtroDataInicio === '' || new Date(ev.data) >= new Date(filtroDataInicio);
+            const matchDataFim = filtroDataFim === '' || new Date(ev.data) <= new Date(filtroDataFim);
+            const matchSituacao = filtroSituacao === '' || ev.situacao === filtroSituacao;
 
             return matchDiretoria && matchDataInicio && matchDataFim && matchSituacao;
         })

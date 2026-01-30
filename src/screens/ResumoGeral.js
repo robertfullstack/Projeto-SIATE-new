@@ -5,7 +5,7 @@ import Logo01 from '../images/logo01.png';
 import { db } from '../firebaseConfig';
 import { ref, onValue } from 'firebase/database';
 import { useEffect, useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell, AreaChart, Area } from 'recharts';
 import { FiHome, FiFileText, FiBarChart2, FiUsers, FiLogOut } from 'react-icons/fi';
 import { PieChart, Pie } from 'recharts';
 
