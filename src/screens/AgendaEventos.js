@@ -516,9 +516,7 @@ function AgendaEventos({ tipo }) {
             )} */}
 
 
-
-
-        </div >
+        </div>
     );
 }
 
