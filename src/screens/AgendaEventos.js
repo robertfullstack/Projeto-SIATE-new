@@ -212,10 +212,14 @@ function AgendaEventos({ tipo }) {
                     ev.diretoria?.toLowerCase() === (filtroMap[filtroDiretoria] || '').toLowerCase()
                 );
 
+            const matchDataInicio =
+                filtroDataInicio === '' || new Date(ev.data) >= new Date(filtroDataInicio);
 
-            const matchDataInicio = filtroDataInicio === '' || new Date(ev.data) >= new Date(filtroDataInicio);
-            const matchDataFim = filtroDataFim === '' || new Date(ev.data) <= new Date(filtroDataFim);
-            const matchSituacao = filtroSituacao === '' || ev.situacao === filtroSituacao;
+            const matchDataFim =
+                filtroDataFim === '' || new Date(ev.data) <= new Date(filtroDataFim);
+
+            const matchSituacao =
+                filtroSituacao === '' || ev.situacao === filtroSituacao;
 
             return matchDiretoria && matchDataInicio && matchDataFim && matchSituacao;
         })
