@@ -29,6 +29,7 @@ function AgendaEventos({ tipo }) {
             : texto;
     };
 
+
     const [eventos, setEventos] = useState([]);
     const [novoEvento, setNovoEvento] = useState({
         diretoria: tipo || '',
@@ -39,9 +40,15 @@ function AgendaEventos({ tipo }) {
         local: '',
         necessidades: '',
         obs: '',
-        situacao: "A Realizar",   // 👈 já inicia com "A Realizar"
-        assunto: ''
+        situacao: "A Realizar",
+        assunto: '',
+
+        // 👇 NOVOS CAMPOS
+        dataPagamento: '',
+        descricaoPagamento: '',
+        valorPago: ''
     });
+
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [editandoId, setEditandoId] = useState(null);
 
@@ -178,11 +185,17 @@ function AgendaEventos({ tipo }) {
             necessidades: evento.necessidades || '',
             obs: evento.obs || '',
             situacao: evento.situacao || '',
-            assunto: evento.assunto || ''
+            assunto: evento.assunto || '',
+
+            // 👇 PAGAMENTO
+            dataPagamento: evento.dataPagamento || '',
+            descricaoPagamento: evento.descricaoPagamento || '',
+            valorPago: evento.valorPago || ''
         });
         setEditandoId(evento.id);
         setMostrarFormulario(true);
     };
+
     const isAdminMaster = cpfLogado === "000.000.000-00";
 
     const [mostrarFormularioUsuario, setMostrarFormularioUsuario] = useState(false);
@@ -390,6 +403,35 @@ function AgendaEventos({ tipo }) {
 
                                 <input type="text" placeholder="Observações" value={novoEvento.obs} onChange={(e) => setNovoEvento({ ...novoEvento, obs: e.target.value })} />
 
+                                <h4>Informações de Pagamento</h4>
+
+                                <label>Data do Pagamento:</label>
+                                <input
+                                    type="date"
+                                    value={novoEvento.dataPagamento}
+                                    onChange={(e) =>
+                                        setNovoEvento({ ...novoEvento, dataPagamento: e.target.value })
+                                    }
+                                />
+
+                                <input
+                                    type="text"
+                                    placeholder="Descrição do Pagamento"
+                                    value={novoEvento.descricaoPagamento}
+                                    onChange={(e) =>
+                                        setNovoEvento({ ...novoEvento, descricaoPagamento: e.target.value })
+                                    }
+                                />
+
+                                <input
+                                    type="number"
+                                    placeholder="Valor Pago / Gasto"
+                                    value={novoEvento.valorPago}
+                                    onChange={(e) =>
+                                        setNovoEvento({ ...novoEvento, valorPago: e.target.value })
+                                    }
+                                />
+
                                 <button className="btn-salvar-evento" onClick={handleCriarEvento}>
                                     {editandoId ? '💾 Salvar Alterações' : '✅ Salvar Evento'}
                                 </button>
@@ -462,6 +504,7 @@ function AgendaEventos({ tipo }) {
                                         <th>Local</th>
                                         <th>Assunto</th>
                                         <th>Situação</th>
+                                        <th>Valor Pago</th>
                                         <th>OBS</th>
                                         <th>Ações</th>
                                     </tr>
@@ -471,7 +514,7 @@ function AgendaEventos({ tipo }) {
                                         <tr><td colSpan="10" style={{ textAlign: 'center' }}>Nenhum evento</td></tr>
                                     ) : (
                                         eventosFiltradosComFiltro
-                                            .sort((a, b) => new Date(b.data + 'T' + b.hora) - new Date(a.data + 'T' + a.hora)) // mais recentes primeiro
+                                            .sort((a, b) => new Date(b.data + 'T' + b.hora) - new Date(a.data + 'T' + a.hora))
                                             .map((evento) => (
                                                 <tr key={evento.id}>
                                                     <td>{evento.diretoria}</td>
@@ -482,6 +525,17 @@ function AgendaEventos({ tipo }) {
                                                     <td>{evento.local}</td>
                                                     <td>{evento.assunto}</td>
                                                     <td>{evento.situacao}</td>
+                                                    <td
+                                                        style={{ cursor: 'pointer', color: '#0d6efd', fontWeight: 'bold' }}
+                                                        onClick={() => handleEditarEvento(evento)}
+                                                    >
+                                                        {evento.valorPago
+                                                            ? `R$ ${Number(evento.valorPago).toLocaleString('pt-BR', {
+                                                                minimumFractionDigits: 2
+                                                            })}`
+                                                            : '—'}
+                                                    </td>
+
                                                     <td>{evento.obs}</td>
                                                     <td>
                                                         {!isCpfEspecial && (
