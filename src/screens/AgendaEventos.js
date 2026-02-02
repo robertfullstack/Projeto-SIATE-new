@@ -2,7 +2,13 @@ import './AgendaEventos.css';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
 import Logo01 from '../images/logo01.png';
-import { PieChart, Pie, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+import {
+    PieChart, Pie, Tooltip, Legend, ResponsiveContainer, Cell, BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+} from 'recharts';
 
 
 
@@ -16,6 +22,12 @@ function AgendaEventos({ tipo }) {
     const cpfLogado = localStorage.getItem("cpfLogado");
     const isCpfEspecial = cpfLogado === "000.000.000-01";
 
+    const abreviarTexto = (texto, limite = 18) => {
+        if (!texto) return '';
+        return texto.length > limite
+            ? texto.substring(0, limite) + '…'
+            : texto;
+    };
 
     const [eventos, setEventos] = useState([]);
     const [novoEvento, setNovoEvento] = useState({
@@ -205,7 +217,8 @@ function AgendaEventos({ tipo }) {
         'Diretoria de Cultura': 'Diretoria de Cultura',
         'Conselho Deliberativo': 'Conselho Deliberativo',
         'Conselho Fiscal': 'Conselho Fiscal',
-        'Diretoria Executiva': 'Diretoria Executiva'
+        'Diretoria Executiva': 'Diretoria Executiva',
+        'Diretoria Esportes': 'Diretoria de Esportes'
     };
 
     const eventosFiltradosComFiltro = eventosFiltrados
@@ -235,6 +248,20 @@ function AgendaEventos({ tipo }) {
 
 
 
+    // const graficoPorAssunto = useMemo(() => {
+    //     const agrupado = {};
+
+    //     eventosParaGrafico.forEach(ev => {
+    //         const assunto = ev.assunto || 'Não informado';
+    //         agrupado[assunto] = (agrupado[assunto] || 0) + 1;
+    //     });
+
+    //     return Object.entries(agrupado).map(([nome, qtd]) => ({
+    //         nome,
+    //         qtd
+    //     }));
+    // }, [eventosParaGrafico]);
+
     const graficoPorAssunto = useMemo(() => {
         const agrupado = {};
 
@@ -248,6 +275,10 @@ function AgendaEventos({ tipo }) {
             qtd
         }));
     }, [eventosParaGrafico]);
+
+    const graficoPorAssuntoOrdenado = useMemo(() => {
+        return [...graficoPorAssunto].sort((a, b) => b.qtd - a.qtd);
+    }, [graficoPorAssunto]);
 
     const graficoPorDiretoria = useMemo(() => {
         const agrupado = {};
@@ -377,6 +408,7 @@ function AgendaEventos({ tipo }) {
                                     <option>Diretoria de Eventos Sociais</option>
                                     <option>Diretoria de Cultura</option>
                                     <option>Conselho Deliberativo</option>
+                                    <option>Diretoria Esportes</option>
                                     <option>Conselho Fiscal</option>
                                     <option>Diretoria Executiva</option>
                                 </select>
@@ -555,7 +587,7 @@ function AgendaEventos({ tipo }) {
                                 ))}
                             </Pie>
                             <Tooltip />
-                            <Legend />
+                            {/* <Legend /> */}
                         </PieChart>
                     </ResponsiveContainer>
                 </div>
@@ -563,26 +595,36 @@ function AgendaEventos({ tipo }) {
                 {/* Pizza por Assunto */}
                 <div className="grafico-item">
                     <h4>Eventos por Assunto</h4>
-                    <ResponsiveContainer width="100%" height={250}>
-                        <PieChart>
-                            <Pie
-                                data={graficoPorAssunto}
+
+                    <ResponsiveContainer width="100%" height={320}>
+                        <BarChart
+                            data={graficoPorAssuntoOrdenado}
+                            layout="vertical"
+                            margin={{ top: 10, right: 30, left: 90, bottom: 10 }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis type="number" />
+                            <YAxis
+                                dataKey="nome"
+                                type="category"
+                                width={160}
+                                tickFormatter={(value) => abreviarTexto(value)}
+                            />
+                            <Tooltip
+                                formatter={(value, name, props) => [
+                                    value,
+                                    props.payload.nome
+                                ]}
+                            />
+                            <Bar
                                 dataKey="qtd"
-                                nameKey="nome"
-                                outerRadius={80}
-                                label={({ name, percent }) =>
-                                    `${name}: ${(percent * 100).toFixed(0)}%`
-                                }
-                            >
-                                {graficoPorAssunto.map((_, index) => (
-                                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                                ))}
-                            </Pie>
-                            <Tooltip />
-                            <Legend />
-                        </PieChart>
+                                fill="#0d6efd"
+                                radius={[0, 6, 6, 0]}
+                            />
+                        </BarChart>
                     </ResponsiveContainer>
                 </div>
+
 
             </div>
 
