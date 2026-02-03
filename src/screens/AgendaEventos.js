@@ -414,13 +414,19 @@ function AgendaEventos({ tipo }) {
                                     }
                                 />
 
-                                <input
-                                    type="text"
+                                <textarea
                                     placeholder="Descrição do Pagamento"
                                     value={novoEvento.descricaoPagamento}
                                     onChange={(e) =>
                                         setNovoEvento({ ...novoEvento, descricaoPagamento: e.target.value })
                                     }
+                                    style={{
+                                        height: '200px !important',
+                                        resize: 'none',
+                                        // padding: '10px',
+                                        fontSize: '16px',
+                                        width: '380px'
+                                    }}
                                 />
 
                                 <input
@@ -647,7 +653,7 @@ function AgendaEventos({ tipo }) {
                 </div>
 
                 {/* Pizza por Assunto */}
-                <div className="grafico-item">
+                {/* <div className="grafico-item">
                     <h4>Eventos por Assunto</h4>
 
                     <ResponsiveContainer width="100%" height={320}>
@@ -677,7 +683,7 @@ function AgendaEventos({ tipo }) {
                             />
                         </BarChart>
                     </ResponsiveContainer>
-                </div>
+                </div> */}
 
 
             </div>
